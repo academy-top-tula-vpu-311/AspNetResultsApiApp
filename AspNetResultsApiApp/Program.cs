@@ -1,7 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.Map("/", () => Results.Text("Home Page"));
+app.UseStaticFiles();
+
+//app.Map("/", () => Results.Text("Home Page"));
 
 //app.Run(async context =>
 //{
@@ -32,8 +34,19 @@ app.Map("/", () => Results.Text("Home Page"));
 //app.Map("/new", () => Results.Text("New Page"));
 //app.Map("/yandex", () => Results.Redirect("https://ya.ru"));
 
+app.Map("/", async (context) =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync("html/index.html");
+});
 
-app.Map("/about", () => Results.NotFound(new {message = "Not founde resorce"}));
+app.Map("/form", (HttpContext context) =>
+{
+    if (context.Request.Method.ToUpper() == "GET")
+        Results.Text("Get request");
+    else
+        Results.Text("Post request");
+});
 
 
 app.Run();
